@@ -38,7 +38,8 @@
     _imgView = [[ZYGImgView alloc] initWithFrame:self.view.bounds];
     [self.view addSubview:_imgView];
 
-    [_zyVideoCamera addTarget:_imgView];
+//    [_zyVideoCamera addTarget:_imgView];
+    _zyVideoCamera.nextImgView = _imgView;
 
     [_zyVideoCamera startCapture];
 }

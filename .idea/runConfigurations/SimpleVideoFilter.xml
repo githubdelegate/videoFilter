@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="SimpleVideoFilter" type="AppleRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SimpleVideoFilter" TARGET_NAME="SimpleVideoFilter" CONFIG_NAME="Debug" SCHEME_NAME="SimpleVideoFilter" RUN_TARGET_PROJECT_NAME="SimpleVideoFilter" RUN_TARGET_NAME="SimpleVideoFilter" MAKE_ACTIVE="TRUE">
+    <envs />
+    <EXTENSION ID="org.jetbrains.appcode.reveal.RevealRunConfigurationExtension">
+      <REVEAL_SETTINGS autoInject="false" autoInstall="true" askToEnableAutoInstall="true" />
+    </EXTENSION>
+    <method />
+  </configuration>
+</component>

@@ -36,6 +36,7 @@ GLfloat kColorConversion601FullRangeDefault[] = {
 @property (nonatomic, strong) NSMutableArray<ZYFrameBuffer *> *frameBufferArys;
 @property (nonatomic, strong) ZYFrameBuffer *renderingFrameBuffer;
 @property (nonatomic, strong) GLProgram *glProgram;
+@property (nonatomic, strong) NSMutableArray<ZYGPUImgInput> *targets;
 @end
 
 @implementation ZYGPUImgVideoCamera
@@ -55,6 +56,20 @@ GLfloat kColorConversion601FullRangeDefault[] = {
         return;
     }
     [self.session startRunning];
+}
+
+
+
+- (void)addTarget:(id <ZYGPUImgInput>)target {
+    if(target){
+        [self.targets addObject:target];
+    }
+}
+- (NSMutableArray <ZYGPUImgInput> *)targets {
+    if(!_targets){
+        _targets = [NSMutableArray array];
+    }
+    return _targets;
 }
 
 #pragma mark - private
@@ -81,16 +96,14 @@ GLfloat kColorConversion601FullRangeDefault[] = {
     }
     postionAttriIndex = [yuv2rgbProgram attributeIndex:@"position"];
     inputTextureAttriIndex = [yuv2rgbProgram attributeIndex:@"inputTextureCoord"];
+
     yUnifromIndex = [yuv2rgbProgram uniformIndex:@"luminanceTexture"];
     uvUnifromIndex = [yuv2rgbProgram uniformIndex:@"chrominaceTexture"];
     colorMatrixIndex = [yuv2rgbProgram uniformIndex:@"colorConversionMatrix"];
 
     glEnableVertexAttribArray(postionAttriIndex);
     glEnableVertexAttribArray(inputTextureAttriIndex);
-
     [yuv2rgbProgram use];
-
-
     self.frameBufferArys = [NSMutableArray array];
 }
 
@@ -224,14 +237,18 @@ GLfloat kColorConversion601FullRangeDefault[] = {
     [self convertYUV2RGB];
 
     // 4. 通知target ，遍历target,把framebuffer传递过去。等待target 使用完framebuffer后 才把framebuffer添加回池中。
-    for (id<ZYGPUImgInput> input in self.targets){
-        [input newFrame:self.renderingFrameBuffer];
-    }
+
+#warning 这里不知道为什么 targets变成了mallocblock fuck。
+//    NSLog(@"all target = %@", [self.targets firstObject]);
+//    for (id<ZYGPUImgInput> input in self.targets){
+//        [input newFrame:self.renderingFrameBuffer];
+//    }
+
+    [self.nextImgView newFrame:self.renderingFrameBuffer];
 }
 
 // 过程就是开启绘制，通过program把YUV数据转成rgb数据，然后数据保存在framebuffer中。
 - (void)convertYUV2RGB{
-
     // context
     [[ZYGPUImgCtx shareCtx] userCurrentCtx];
 
@@ -282,7 +299,6 @@ GLfloat kColorConversion601FullRangeDefault[] = {
 
     // 绘制
     glDrawArrays(GL_STATIC_DRAW, 0, 4);
-
 }
 
 #pragma mark - samplebuffer callback
@@ -291,10 +307,11 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureC
     if(dispatch_semaphore_wait(frameRenderSemaphore, DISPATCH_TIME_NOW) != 0){
         return;
     }
-    
+
+    CFRetain(sampleBuffer);
     // 开启新线程异步处理视频帧数据,转换成rgba数据 传给下一个target
     runAsynchronouslyOnVideoProcessQueue(^{
-        CFRetain(sampleBuffer);
+
         [self processVideoFrame:sampleBuffer];
         dispatch_semaphore_signal(frameRenderSemaphore);
         CFRelease(sampleBuffer);

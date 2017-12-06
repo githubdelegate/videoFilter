@@ -90,8 +90,10 @@
     }
 }
 
+
 - (GLuint)uniformIndex:(NSString *)name {
-    return (GLuint)[uniformsAry indexOfObject:name];
+#warning uniform的index需要使用下面的函数取,而不是数组的下标
+    return glGetUniformLocation(programId, [name UTF8String]);
 }
 
 // 编译shader 代码

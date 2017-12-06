@@ -17,6 +17,7 @@
 
 - (instancetype)initWithSize:(CGSize)size {
     if(self = [super init]){
+        renderSize = size;
         [self generateFrameBuffer];
     }
     return self;
@@ -27,6 +28,35 @@
     glGenFramebuffers(1,&frameBuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 
+
+    /**
+     *             CFDictionaryRef empty; // empty value for attr value.
+            CFMutableDictionaryRef attrs;
+            empty = CFDictionaryCreate(kCFAllocatorDefault, NULL, NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks); // our empty IOSurface properties dictionary
+            attrs = CFDictionaryCreateMutable(kCFAllocatorDefault, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+            CFDictionarySetValue(attrs, kCVPixelBufferIOSurfacePropertiesKey, empty);
+
+            CVReturn err = CVPixelBufferCreate(kCFAllocatorDefault,
+                    (int)_size.width, (int)_size.height, kCVPixelFormatType_32BGRA, attrs, &renderTarget);
+            if (err)
+            {
+                NSLog(@"FBO size: %f, %f", _size.width, _size.height);
+                NSAssert(NO, @"Error at CVPixelBufferCreate %d", err);
+            }
+
+            // 创建纹理，图片参数为NULL,
+            err = CVOpenGLESTextureCacheCreateTextureFromImage (kCFAllocatorDefault, coreVideoTextureCache, renderTarget,
+                                                                NULL, // texture attributes
+                                                                GL_TEXTURE_2D,
+                                                                _textureOptions.internalFormat, // opengl format
+                                                                (int)_size.width,
+                                                                (int)_size.height,
+                                                                _textureOptions.format, // native iOS format
+                                                                _textureOptions.type,
+                                                                0,
+                                                                &renderTexture);
+     *
+     */
     // corevideo  fast 创建texture
     CVOpenGLESTextureCacheRef textureCacheRef;
     CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, NULL, [ZYGPUImgCtx shareCtx].currentCtx, NULL,&textureCacheRef);
@@ -40,7 +70,7 @@
     CFDictionarySetValue(attrs, kCVPixelBufferIOSurfacePropertiesKey, empty);
 
     CVPixelBufferRef pixelBufferRef;
-    CVReturn  err = CVPixelBufferCreate(kCFAllocatorDefault, size.width, size.height,
+    CVReturn  err = CVPixelBufferCreate(kCFAllocatorDefault, renderSize.width, renderSize.height,
             kCVPixelFormatType_32ARGB, attrs, pixelBufferRef);
     if(err){
         NSLog(@"create pixel buffer failed");
@@ -49,7 +79,7 @@
 
     CVOpenGLESTextureRef  textureRef;
     err = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, textureCacheRef, NULL,
-            NULL, GL_TEXTURE_2D, GL_RGBA, size.width, size.height,GL_BGRA,GL_UNSIGNED_BYTE,0,&textureRef);
+            NULL, GL_TEXTURE_2D, GL_RGBA, renderSize.width, renderSize.height,GL_BGRA,GL_UNSIGNED_BYTE,0,&textureRef);
 
     if(err){
         NSLog(@"create texture from cache");

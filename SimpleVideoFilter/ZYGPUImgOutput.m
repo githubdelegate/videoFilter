@@ -17,9 +17,15 @@ void runAsynchronouslyOnVideoProcessQueue(void (^block)(void)){
     }
 }
 
+void  runSynchronoouslyOnVideoProcessQueue(void(^block)(void)){
+    if(dispatch_get_current_queue() == [[ZYGPUImgCtx shareCtx] videoProcessingQueue]){
+        block();
+    }else{
+        dispatch_sync([[ZYGPUImgCtx shareCtx] videoProcessingQueue], block);
+    }
+}
+
 @implementation ZYGPUImgOutput
-
-
 - (instancetype)init {
     if(self = [super init]){
 
@@ -28,16 +34,5 @@ void runAsynchronouslyOnVideoProcessQueue(void (^block)(void)){
 }
 
 
-- (void)addTarget:(id <ZYGPUImgInput>)target {
-    if(target){
-        [self.targets addObject:target];
-    }
-}
-- (NSMutableArray <ZYGPUImgInput> *)targets {
-    if(!_targets){
-        _targets = [NSMutableArray array];
-    }
-    return _targets;
-}
 
 @end

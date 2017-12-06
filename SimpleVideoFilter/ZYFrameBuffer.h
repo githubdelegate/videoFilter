@@ -9,7 +9,7 @@
 @interface ZYFrameBuffer : NSObject
 {
     GLuint  renderTexture;
-    CGSize size;
+    CGSize renderSize;
 }
 
 
