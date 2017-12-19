@@ -6,6 +6,17 @@
 #import <Foundation/Foundation.h>
 
 
+typedef struct {
+    GLenum  minFilter;
+    GLenum  magFilter;
+    GLenum  wrapS;
+    GLenum  wrapT;
+    GLenum  format;
+    GLenum  internalFormat;
+    GLenum  type;
+}ZYGPUTextureOptions;
+
+
 @interface ZYFrameBuffer : NSObject
 {
     GLuint  renderTexture;
@@ -17,4 +28,7 @@
 - (void)activeFrameBuffer;
 
 - (GLuint)renderTextureId;
+
+- (void)lock;
+- (void)unlock;
 @end

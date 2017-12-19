@@ -11,6 +11,7 @@
 @interface ZYGPUImgCtx()
 {
     dispatch_queue_t videoProcessingQueue;
+    ZYFrameBufferCache *_framebufferCache;
 }
 @property (nonatomic,strong) EAGLContext  *ctx;
 @end
@@ -25,6 +26,10 @@
         ctx = [[ZYGPUImgCtx alloc] init];
     });
     return ctx;
+}
+
++ (ZYFrameBufferCache *)framebufferCache {
+    return [[ZYGPUImgCtx shareCtx] framebufferCache];
 }
 
 - (dispatch_queue_t)videoProcessingQueue{
@@ -49,4 +54,14 @@
     [EAGLContext setCurrentContext:self.ctx];
 }
 
+
+
+#pragma mark - getter
+
+- (ZYFrameBufferCache *)framebufferCache {
+    if(!_framebufferCache){
+     _framebufferCache = [[ZYFrameBufferCache alloc] init];
+    }
+    return _framebufferCache;
+}
 @end

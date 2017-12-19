@@ -10,6 +10,7 @@
 
 @interface ZYFrameBuffer(){
     GLuint  frameBuffer;
+    NSInteger refCount;
 }
 @end
 
@@ -18,6 +19,7 @@
 - (instancetype)initWithSize:(CGSize)size {
     if(self = [super init]){
         renderSize = size;
+        refCount = 0;
         [self generateFrameBuffer];
     }
     return self;
@@ -101,6 +103,18 @@
 
 - (void)destoryFramebuffer{
 
+}
+
+- (void)unlock {
+    refCount--;
+    if(refCount < 1){
+        // 这个buffer 要被回收
+        //
+    }
+}
+
+- (void)lock {
+    refCount++;
 }
 
 

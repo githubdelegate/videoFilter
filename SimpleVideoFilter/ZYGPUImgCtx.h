@@ -7,8 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ZYFrameBufferCache.h"
 
 @interface ZYGPUImgCtx : NSObject
+
+@property (nonatomic, strong, readonly) ZYFrameBufferCache *framebufferCache;
 
 + (instancetype)shareCtx;
 
@@ -18,4 +21,6 @@
 - (void)userCurrentCtx;
 
 - (EAGLContext *)currentCtx;
+
++ (ZYFrameBufferCache *)framebufferCache;
 @end
