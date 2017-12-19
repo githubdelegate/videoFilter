@@ -7,6 +7,7 @@
 //
 
 #import "ZYGPUImgCtx.h"
+#import "ZYFrameBufferCache.h"
 
 @interface ZYGPUImgCtx()
 {
@@ -28,7 +29,7 @@
     return ctx;
 }
 
-+ (ZYFrameBufferCache *)framebufferCache {
++ (ZYFrameBufferCache *)getFrameBufferCache{
     return [[ZYGPUImgCtx shareCtx] framebufferCache];
 }
 
@@ -57,7 +58,7 @@
 
 
 #pragma mark - getter
-
+//
 - (ZYFrameBufferCache *)framebufferCache {
     if(!_framebufferCache){
      _framebufferCache = [[ZYFrameBufferCache alloc] init];

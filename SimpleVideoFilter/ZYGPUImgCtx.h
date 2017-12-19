@@ -7,20 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ZYFrameBufferCache.h"
+
+@class ZYFrameBufferCache;
 
 @interface ZYGPUImgCtx : NSObject
-
-@property (nonatomic, strong, readonly) ZYFrameBufferCache *framebufferCache;
-
 + (instancetype)shareCtx;
-
 - (dispatch_queue_t)videoProcessingQueue;
-
 
 - (void)userCurrentCtx;
 
 - (EAGLContext *)currentCtx;
 
-+ (ZYFrameBufferCache *)framebufferCache;
++ (ZYFrameBufferCache *)getFrameBufferCache;
 @end

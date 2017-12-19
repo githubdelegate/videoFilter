@@ -4,9 +4,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ZYGPUImgCtx.h"
 
-
-typedef struct {
+typedef struct{
     GLenum  minFilter;
     GLenum  magFilter;
     GLenum  wrapS;
@@ -16,13 +16,15 @@ typedef struct {
     GLenum  type;
 }ZYGPUTextureOptions;
 
-
 @interface ZYFrameBuffer : NSObject
 {
-    GLuint  renderTexture;
+    GLuint renderTexture;
     CGSize renderSize;
 }
 
+@property (nonatomic, readonly, assign) CGSize size;
+@property (nonatomic, readonly, assign) ZYGPUTextureOptions options;
+@property (nonatomic, readonly, assign) BOOL  onlyTexture;
 
 - (instancetype)initWithSize:(CGSize)size;
 - (void)activeFrameBuffer;
@@ -31,4 +33,5 @@ typedef struct {
 
 - (void)lock;
 - (void)unlock;
+- (void)clearAllLock;
 @end

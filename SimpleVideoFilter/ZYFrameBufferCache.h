@@ -8,7 +8,7 @@
 
 @interface ZYFrameBufferCache : NSObject
 // 获取framebuffer
-- (ZYFrameBuffer *)framebufferForSize:(CGSize)size textureOption:(ZYGPUTextureOptions)options onlyTexture:(BOOL)only;
+- (ZYFrameBuffer *)framebufferForSize:(CGSize)size option:(ZYGPUTextureOptions)option onlyTexture:(BOOL)only;
 // 把framebuffer 放回到缓存池
 - (void)returnFramebuffer2Cache:(ZYFrameBuffer *)framebuffer;
 @end
