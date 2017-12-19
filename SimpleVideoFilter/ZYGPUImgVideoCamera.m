@@ -18,7 +18,7 @@ GLfloat kColorConversion601FullRangeDefault[] = {
 #import <GLKit/GLKit.h>
 #import "ZYGLProgram.h"
 #import "ZYFrameBuffer.h"
-#import "ZYGPUImgInput.h"
+#import "ZYFrameBufferCache.h"
 #import <GLProgram.h>
 
 @interface ZYGPUImgVideoCamera()<AVCaptureVideoDataOutputSampleBufferDelegate> {
@@ -256,12 +256,11 @@ GLfloat kColorConversion601FullRangeDefault[] = {
     [yuv2rgbProgram use];
 
     // framebuffer
-    ZYFrameBuffer *fbo;
-    if([self.frameBufferArys count] > 0){
-         fbo = [self.frameBufferArys lastObject];
-    }else{
-         fbo = [[ZYFrameBuffer alloc] initWithSize:CGSizeMake(imgW, imgH)];
-    }
+    CGSize size = CGSizeMake(imgW, imgH);
+    ZYFrameBuffer *fbo = [[ZYGPUImgCtx getFrameBufferCache]
+            framebufferForSize:size
+                        option:self.outputOptions
+                   onlyTexture:NO];
 
     self.renderingFrameBuffer = fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, [fbo renderTextureId]);
